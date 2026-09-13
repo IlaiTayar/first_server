@@ -31,7 +31,7 @@ async def create_order(order: Order) -> str:
     return "order created successfully"
 
 
-async def update_order_by_id(order_id: int, order: Order) -> Optional[Order]:
+async def update_order_by_id(order_id: int, order: Order) -> str:
     query = """
     update orders 
     set customer_id = :customer_id, 
@@ -46,7 +46,10 @@ async def update_order_by_id(order_id: int, order: Order) -> Optional[Order]:
         "price": order.price,
         "order_id": order_id
     }
-    return await database.execute(query, values)
+
+    await database.execute(query, values)
+    return f"order with id: {order_id} updated successfully"
+
 
 async def get_order_by_id(order_id: int) -> Optional[Order]:
     query = """

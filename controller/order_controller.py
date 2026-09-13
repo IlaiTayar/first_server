@@ -5,7 +5,10 @@ from fastapi import APIRouter, HTTPException
 from model.order import Order
 from repository import order_repository
 
-router = APIRouter(prefix="/order", tags=["order"])
+router = APIRouter(
+    prefix="/order",
+    tags=["order"]
+)
 
 
 @router.post("/create_order", status_code=201)
@@ -14,8 +17,8 @@ async def create_order(order: Order) -> str:
     return await order_repository.create_order(order)
 
 
-@router.put("/update_order-{order_id}",response_model=Optional[Order], status_code=200)
-async def update_order(order_id: int, order: Order) -> Optional[Order]:
+@router.put("/update_order-{order_id}", status_code=200)
+async def update_order(order_id: int, order: Order) -> str:
     existing_order = await order_repository.get_order_by_id(order_id)
 
     if not existing_order:

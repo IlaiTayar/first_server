@@ -31,7 +31,7 @@ async def create_customer(customer: Customer) -> str:
     return "customer created successfully"
 
 
-async def update_customer_by_id(customer_id: int, customer: Customer) -> Optional[Customer]:
+async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
     query: str = """ 
     UPDATE customer
     SET first_name = :first_name, 
@@ -47,7 +47,8 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> Optiona
         "customer_id": customer_id,
     }
 
-    return await database.execute(query, values)
+    await database.execute(query, values)
+    return f"customer with id: {customer_id} updated successfully"
     
     
 async def get_customer_by_id(customer_id: int) -> Optional[Customer]:
