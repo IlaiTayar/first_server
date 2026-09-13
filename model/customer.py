@@ -1,13 +1,10 @@
-
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
 class Customer(BaseModel):
-    customer_id: int = Field(
-        default=0,
-        json_schema_extra={"readOnly": True}
-    )
+    customer_id: Optional[int] = None
     first_name: str
     last_name: str
     email: str

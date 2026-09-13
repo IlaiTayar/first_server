@@ -1,13 +1,10 @@
-from decimal import Decimal
+from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Order(BaseModel):
-    order_id: int = Field(
-        default=0,
-        json_schema_extra={"readOnly": True}
-    )
+    order_id: Optional[int] = None
     customer_id: int
     item_name: str
-    price: Decimal
+    price: float

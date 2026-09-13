@@ -1,4 +1,4 @@
-from typing import Dict, Optional, List, Any
+from typing import Dict, Optional, List, Any, Union
 
 from databases.interfaces import Record
 
@@ -31,6 +31,25 @@ async def create_customer(customer: Customer) -> str:
     return "customer created successfully"
 
 
+async def update_customer_by_id(customer_id: int, customer: Customer) -> Optional[Customer]:
+    query: str = """ 
+    UPDATE customer
+    SET first_name = :first_name, 
+    last_name = :last_name, 
+    email = :email
+    WHERE customer_id = :customer_id
+    """
+
+    values: Dict[str, Union[str, int]] = {
+        "first_name": customer.first_name,
+        "last_name": customer.last_name,
+        "email": customer.email,
+        "customer_id": customer_id,
+    }
+
+    return await database.execute(query, values)
+    
+    
 async def get_customer_by_id(customer_id: int) -> Optional[Customer]:
     query: str = """
     SELECT * FROM customer WHERE customer_id = :customer_id
