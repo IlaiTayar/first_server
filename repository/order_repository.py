@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, List
+from typing import Dict, Optional, List, Union
 
 from databases.interfaces import Record
 
@@ -21,7 +21,7 @@ async def create_order(order: Order) -> str:
     VALUES (:customer_id, :item_name, :price)
     """
 
-    values: Dict[str, Any] = {
+    values: Dict[str, Union[str, float]] = {
         "customer_id": order.customer_id,
         "item_name": order.item_name,
         "price": order.price
@@ -29,6 +29,24 @@ async def create_order(order: Order) -> str:
 
     await database.execute(query, values)
     return "order created successfully"
+
+
+async def update_order_by_id(order_id: int, order: Order) -> Optional[Order]:
+    query = """
+    update orders 
+    set customer_id = :customer_id, 
+    item_name = :item_name, 
+    price = :price 
+    where order_id = :order_id
+    """
+
+    values: Dict[str, Union[str, float]] = {
+        "customer_id": order.customer_id,
+        "item_name": order.item_name,
+        "price": order.price,
+        "order_id": order_id
+    }
+    return await database.execute(query, values)
 
 async def get_order_by_id(order_id: int) -> Optional[Order]:
     query = """

@@ -15,7 +15,7 @@ async def create_customer(customer: Customer) -> str:
     return await customer_repository.create_customer(customer)
 
 
-@router.put("/update_customer-{customer_id}", response_model=Customer ,status_code=200)
+@router.put("/update_customer-{customer_id}", response_model=Optional[Customer] ,status_code=200)
 async def update_customer_by_id(customer_id: int, customer: Customer) -> Optional[Customer]:
     existing_customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
     if not existing_customer:
