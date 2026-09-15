@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException
 
 from model.customer import Customer
-from repository import customer_repository
+from repository import customer_repository, order_repository
 
 router: APIRouter = APIRouter(
     prefix="/customer",
@@ -41,5 +41,10 @@ async def get_all_customers() -> List[Customer]:
 async def delete_customer_by_id(customer_id: int) -> str:
     customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
     if not customer:
-        raise HTTPException(status_code=404, detail="Customer with id: {customer_id} not found")
+        raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
+
+    customer_orders = await order_repository.get_orders_by_customer_id(customer_id)
+    for order in customer_orders:
+        await order_repository.delete_order_by_id(order.order_id)
+
     return await customer_repository.delete_customer_by_id(customer_id)

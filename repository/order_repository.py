@@ -51,17 +51,30 @@ async def update_order_by_id(order_id: int, order: Order) -> str:
     return f"order with id: {order_id} updated successfully"
 
 
-async def get_order_by_id(order_id: int) -> Optional[Order]:
+async def get_order_by_id(order_id: Optional[int]) -> Optional[Order]:
     query = """
     select * from orders where order_id = :order_id
     """
 
-    values: Dict[str, int] = {
+    values: Dict[str, Optional[int]] = {
         "order_id": order_id
     }
 
     record: Optional[Record] = await database.fetch_one(query, values)
     return _to_order(record) if record else None
+
+
+async def get_orders_by_customer_id(customer_id: int) -> List[Order]:
+    query = """
+    select * from orders where customer_id = :customer_id
+    """
+
+    values: Dict[str, int] = {
+        "customer_id": customer_id
+    }
+
+    records: List[Record] = await database.fetch_all(query, values)
+    return [_to_order(record) for record in records]
 
 
 async def get_all_orders() -> List[Order]:
@@ -73,12 +86,12 @@ async def get_all_orders() -> List[Order]:
     return [_to_order(record) for record in records]
 
 
-async def delete_order_by_id(order_id: int) -> str:
+async def delete_order_by_id(order_id: Optional[int]) -> str:
     query = """
     delete from orders where order_id = :order_id
     """
 
-    values: Dict[str, int] = {
+    values: Dict[str, Optional[int]] = {
         "order_id": order_id
     }
 
