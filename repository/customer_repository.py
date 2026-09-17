@@ -12,19 +12,21 @@ def _to_customer(record: Record) -> Customer:
         first_name=record["first_name"],
         last_name=record["last_name"],
         email=record["email"],
+        status=record["status"],
     )
 
 
 async def create_customer(customer: Customer) -> str:
     query: str = """
-    INSERT INTO customer (first_name, last_name, email)
-    VALUES (:first_name, :last_name, :email)
+    INSERT INTO customer (first_name, last_name, email, status)
+    VALUES (:first_name, :last_name, :email, :status)
     """
 
     values: Dict[str, str] = {
         "first_name": customer.first_name,
         "last_name": customer.last_name,
         "email": customer.email,
+        "status": customer.status.name
     }
 
     await database.execute(query, values)
@@ -36,7 +38,8 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
     UPDATE customer
     SET first_name = :first_name, 
     last_name = :last_name, 
-    email = :email
+    email = :email,
+    status = :status
     WHERE customer_id = :customer_id
     """
 
@@ -45,6 +48,7 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
         "last_name": customer.last_name,
         "email": customer.email,
         "customer_id": customer_id,
+        "status": customer.status.name
     }
 
     await database.execute(query, values)

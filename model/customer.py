@@ -1,6 +1,12 @@
+from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
+
+class CustomerStatus(Enum):
+    REGULAR = "REGULAR"
+    VIP = "VIP"
 
 
 class Customer(BaseModel):
@@ -8,3 +14,4 @@ class Customer(BaseModel):
     first_name: str
     last_name: str
     email: str
+    status: CustomerStatus = CustomerStatus.REGULAR

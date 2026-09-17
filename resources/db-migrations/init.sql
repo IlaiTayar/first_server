@@ -3,6 +3,7 @@ customer_id INT AUTO_INCREMENT,
 first_name VARCHAR(20) NOT NULL,
 last_name VARCHAR(20) NOT NULL,
 email VARCHAR(50) UNIQUE NOT NULL,
+status VARCHAR(20) NOT NULL DEFAULT 'REGULAR',
 PRIMARY KEY(customer_id)
 );
 
