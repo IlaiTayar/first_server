@@ -4,7 +4,7 @@ from typing import Dict, Optional, List, Union
 from databases.interfaces import Record
 
 from database import database
-from model.customer import Customer
+from model.customer import Customer, CustomerStatus
 from repository import cache_repository
 
 TABLE_NAME = "customer"
@@ -90,6 +90,18 @@ async def get_customer_by_id(customer_id: int) -> Optional[Customer]:
         return None
 
     return None
+
+
+async def get_customer_by_status(status: CustomerStatus) -> List[Customer]:
+    query: str = f"""
+    SELECT * FROM {TABLE_NAME} WHERE status = :status
+    """
+    values: Dict[str, str] = {
+    "status": status.name
+    }
+
+    records:List[Record] = await database.fetch_all(query, values)
+    return [_to_customer(record) for record in records]
 
 
 async def get_all_customers() -> List[Customer]:

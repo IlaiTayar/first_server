@@ -1,15 +1,23 @@
 from typing import Optional, List
 
-from fastapi import HTTPException
 
-from model.customer import Customer
+
+from model.customer import Customer, CustomerStatus
 from repository import customer_repository, order_repository
+
+
+
 
 
 async def create_customer(customer: Customer) -> Optional[str]:
     for e_customer in await customer_repository.get_all_customers():
         if customer.email == e_customer.email:
             return None
+
+    if customer.status == CustomerStatus.VIP:
+        vip_customers: List[Customer] = await customer_repository.get_customer_by_status(CustomerStatus.VIP)
+        if len(vip_customers) >= 10:
+            return "MAXED"
 
     return await customer_repository.create_customer(customer)
 

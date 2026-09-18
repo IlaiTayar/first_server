@@ -19,6 +19,9 @@ async def create_customer(customer: Customer) -> str:
     if not result:
         raise HTTPException(status_code=401, detail=f"Customer with mail: {customer.email} already exists")
 
+    if result == "MAXED":
+        raise HTTPException(status_code=401, detail=f"vip customer list is: {result}")
+
     return result
 
 
