@@ -17,10 +17,10 @@ async def create_customer(customer: Customer) -> str:
 
     result: Optional[str] = await customer_service.create_customer(customer)
     if not result:
-        raise HTTPException(status_code=401, detail=f"Customer with mail: {customer.email} already exists")
+        raise HTTPException(status_code=409, detail=f"Customer with mail: {customer.email} already exists")
 
     if result == "MAXED":
-        raise HTTPException(status_code=401, detail=f"vip customer list is: {result}")
+        raise HTTPException(status_code=409, detail=f"vip customer list is: {result}")
 
     return result
 
@@ -33,7 +33,7 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
         raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
 
     if result == "MAXED":
-        raise HTTPException(status_code=401, detail=f"vip customer list is: {result}")
+        raise HTTPException(status_code=409, detail="Cannot creat VIP customer - out of 10 customers limit")
 
     return result
 
@@ -43,7 +43,7 @@ async def get_customer_by_id(customer_id: int) -> Customer:
 
     result: Optional[Customer] = await customer_service.get_customer_by_id(customer_id)
     if not result:
-        raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
+        raise HTTPException(status_code=409, detail="Cannot creat VIP customer - out of 10 customers limit")
 
     return result
 

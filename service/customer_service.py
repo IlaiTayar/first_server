@@ -28,7 +28,7 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> Optiona
     if not existing_customer:
         return None
 
-    if customer.status == CustomerStatus.VIP:
+    if existing_customer.status == CustomerStatus.REGULAR and customer.status == CustomerStatus.VIP:
         vip_customers: List[Customer] = await customer_repository.get_customer_by_status(CustomerStatus.VIP)
         if len(vip_customers) >= 10:
             return "MAXED"
