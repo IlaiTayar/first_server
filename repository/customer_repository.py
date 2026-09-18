@@ -1,9 +1,13 @@
-from typing import Dict, Optional, List, Any, Union
+import json
+from typing import Dict, Optional, List, Union
 
 from databases.interfaces import Record
 
 from database import database
 from model.customer import Customer
+from repository import cache_repository
+
+TABLE_NAME = "customer"
 
 
 def _to_customer(record: Record) -> Customer:
@@ -17,8 +21,8 @@ def _to_customer(record: Record) -> Customer:
 
 
 async def create_customer(customer: Customer) -> str:
-    query: str = """
-    INSERT INTO customer (first_name, last_name, email, status)
+    query: str = f"""
+    INSERT INTO {TABLE_NAME} (first_name, last_name, email, status)
     VALUES (:first_name, :last_name, :email, :status)
     """
 
@@ -34,8 +38,11 @@ async def create_customer(customer: Customer) -> str:
 
 
 async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
-    query: str = """ 
-    UPDATE customer
+    if cache_repository.is_key_exists(str(customer_id)):
+        cache_repository.remove_cache_entity(str(customer_id))
+
+    query: str = f""" 
+    UPDATE {TABLE_NAME}
     SET first_name = :first_name, 
     last_name = :last_name, 
     email = :email,
@@ -56,21 +63,38 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
     
     
 async def get_customer_by_id(customer_id: int) -> Optional[Customer]:
-    query: str = """
-    SELECT * FROM customer WHERE customer_id = :customer_id
-    """
+    if cache_repository.is_key_exists(str(customer_id)):
+        str_customer = cache_repository.get_cache_entity(str(customer_id))
 
-    values: Dict[str, int] = {
-        "customer_id": customer_id,
-    }
+        if str_customer:
+            customer_data = json.loads(str_customer)
+            cache_repository.remove_cache_entity(str(customer_id))
+            cache_repository.create_cache_entity(str(customer_id), _to_customer(customer_data).json())
+            return _to_customer(customer_data)
 
-    record: Optional[Record] = await database.fetch_one(query, values)
-    return _to_customer(record) if record else None
+    else:
+        query: str = f"""
+        SELECT * FROM {TABLE_NAME} WHERE customer_id = :customer_id
+        """
+
+        values: Dict[str, int] = {
+            "customer_id": customer_id,
+        }
+
+        record: Optional[Record] = await database.fetch_one(query, values)
+        if record:
+            customer = _to_customer(record)
+            cache_repository.create_cache_entity(str(customer_id), customer.json())
+            return customer
+
+        return None
+
+    return None
 
 
 async def get_all_customers() -> List[Customer]:
-    query: str = """
-    SELECT * FROM customer
+    query: str = f"""
+    SELECT * FROM {TABLE_NAME}
     """
 
     records: List[Record] = await database.fetch_all(query)
@@ -78,8 +102,11 @@ async def get_all_customers() -> List[Customer]:
 
 
 async def delete_customer_by_id(customer_id: int) -> str:
-    query: str = """
-    DELETE FROM customer WHERE customer_id = :customer_id
+    if cache_repository.is_key_exists(str(customer_id)):
+        cache_repository.remove_cache_entity(str(customer_id))
+
+    query: str = f"""
+    DELETE FROM {TABLE_NAME} WHERE customer_id = :customer_id
     """
 
     values: Dict[str, int] = {

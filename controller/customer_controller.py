@@ -4,48 +4,55 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException
 
 from model.customer import Customer
-from repository import customer_repository, order_repository
+from service import customer_service
 
 router: APIRouter = APIRouter(
     prefix="/customer",
     tags=["customer"]
 )
 
+
 @router.post("/create_customer", status_code=201)
 async def create_customer(customer: Customer) -> str:
-    return await customer_repository.create_customer(customer)
+
+    result: Optional[str] = await customer_service.create_customer(customer)
+    if not result:
+        raise HTTPException(status_code=400, detail=f"Customer with mail: {customer.email} already exists")
+
+    return result
 
 
 @router.put("/update_customer-{customer_id}",status_code=200)
 async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
-    existing_customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
-    if not existing_customer:
-        raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
-    return await customer_repository.update_customer_by_id(customer_id, customer)
+
+    result: Optional[str] = await customer_service.update_customer_by_id(customer_id, customer)
+    if not result:
+        raise HTTPException(status_code=400, detail=f"Customer with id: {customer.email} already exists")
+
+    return result
 
 
 @router.get("/get_customer-{customer_id}", response_model=Customer, status_code=200)
-async def get_customer_by_id(customer_id: int) -> Optional[Customer]:
-    customer:Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
+async def get_customer_by_id(customer_id: int) -> Customer:
 
-    if not customer:
+    result: Optional[Customer] = await customer_service.get_customer_by_id(customer_id)
+    if not result:
         raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
 
-    return customer
+    return result
 
 
 @router.get("/get_all_customers",response_model=List[Customer], status_code=200)
 async def get_all_customers() -> List[Customer]:
-    return await customer_repository.get_all_customers()
+
+    return await customer_service.get_all_customers()
+
 
 @router.delete("/delete_customer-{customer_id}", status_code=200)
 async def delete_customer_by_id(customer_id: int) -> str:
-    customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
-    if not customer:
+
+    result: Optional[str] = await customer_service.delete_customer_by_id(customer_id)
+    if not result:
         raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
 
-    customer_orders = await order_repository.get_orders_by_customer_id(customer_id)
-    for order in customer_orders:
-        await order_repository.delete_order_by_id(order.order_id)
-
-    return await customer_repository.delete_customer_by_id(customer_id)
+    return result
