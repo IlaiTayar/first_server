@@ -17,7 +17,7 @@ async def create_customer(customer: Customer) -> str:
 
     result: Optional[str] = await customer_service.create_customer(customer)
     if not result:
-        raise HTTPException(status_code=400, detail=f"Customer with mail: {customer.email} already exists")
+        raise HTTPException(status_code=401, detail=f"Customer with mail: {customer.email} already exists")
 
     return result
 
@@ -27,7 +27,7 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
 
     result: Optional[str] = await customer_service.update_customer_by_id(customer_id, customer)
     if not result:
-        raise HTTPException(status_code=400, detail=f"Customer with id: {customer.email} already exists")
+        raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
 
     return result
 

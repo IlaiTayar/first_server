@@ -17,7 +17,7 @@ async def create_customer(customer: Customer) -> Optional[str]:
 async def update_customer_by_id(customer_id: int, customer: Customer) -> Optional[str]:
     existing_customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
 
-    if existing_customer:
+    if not existing_customer:
         return None
 
     return await customer_repository.update_customer_by_id(customer_id, customer)
