@@ -32,6 +32,9 @@ async def update_customer_by_id(customer_id: int, customer: Customer) -> str:
     if not result:
         raise HTTPException(status_code=404, detail=f"Customer with id: {customer_id} not found")
 
+    if result == "MAXED":
+        raise HTTPException(status_code=401, detail=f"vip customer list is: {result}")
+
     return result
 
 
