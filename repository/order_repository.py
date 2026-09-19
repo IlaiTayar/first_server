@@ -15,9 +15,12 @@ def _to_order(record: Record) -> Order:
     )
 
 
+TABLE_NAME = "orders"
+
+
 async def create_order(order: Order) -> str:
-    query = """
-    INSERT INTO orders ( customer_id, item_name, price)
+    query = f"""
+    INSERT INTO {TABLE_NAME} ( customer_id, item_name, price)
     VALUES (:customer_id, :item_name, :price)
     """
 
@@ -32,8 +35,8 @@ async def create_order(order: Order) -> str:
 
 
 async def update_order_by_id(order_id: int, order: Order) -> str:
-    query = """
-    update orders 
+    query = f"""
+    update {TABLE_NAME} 
     set customer_id = :customer_id, 
     item_name = :item_name, 
     price = :price 
@@ -52,8 +55,8 @@ async def update_order_by_id(order_id: int, order: Order) -> str:
 
 
 async def get_order_by_id(order_id: Optional[int]) -> Optional[Order]:
-    query = """
-    select * from orders where order_id = :order_id
+    query = f"""
+    select * from {TABLE_NAME} where order_id = :order_id
     """
 
     values: Dict[str, Optional[int]] = {
@@ -65,8 +68,8 @@ async def get_order_by_id(order_id: Optional[int]) -> Optional[Order]:
 
 
 async def get_orders_by_customer_id(customer_id: int) -> List[Order]:
-    query = """
-    select * from orders where customer_id = :customer_id
+    query = f"""
+    select * from {TABLE_NAME} where customer_id = :customer_id
     """
 
     values: Dict[str, int] = {
@@ -78,8 +81,8 @@ async def get_orders_by_customer_id(customer_id: int) -> List[Order]:
 
 
 async def get_all_orders() -> List[Order]:
-    query = """
-    select * from orders
+    query = f"""
+    select * from {TABLE_NAME}
     """
 
     records: List[Record] = await database.fetch_all(query)
@@ -87,8 +90,8 @@ async def get_all_orders() -> List[Order]:
 
 
 async def delete_order_by_id(order_id: Optional[int]) -> str:
-    query = """
-    delete from orders where order_id = :order_id
+    query = f"""
+    delete from {TABLE_NAME} where order_id = :order_id
     """
 
     values: Dict[str, Optional[int]] = {

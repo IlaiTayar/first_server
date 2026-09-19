@@ -56,11 +56,12 @@ Architecture overview:
 Configuration:
 
 All settings live in config/config.py. Override them with environment variables:
-MYSQL_HOST=mysql
-MYSQL_USER=root
-MYSQL_PASSWORD=secret
-MYSQL_DATABASE=main
-REDIS_HOST=redis
+
+MYSQL_HOST=mysql,
+MYSQL_USER=root,
+MYSQL_PASSWORD=secret,
+MYSQL_DATABASE=main,
+REDIS_HOST=redis,
 REDIS_PORT=6379
 
 Testing:
