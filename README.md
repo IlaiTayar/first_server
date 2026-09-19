@@ -48,20 +48,6 @@ POST /orders/,Create an order for a customer.,
 All endpoints return JSON; see the OpenAPI docs at http://localhost:8000/docs.
 
 Architecture overview:
-
-┌─────────────────────┐      ┌────────────────────────┐
-│    FastAPI app      │◄────►│   redisClient module   │
-│ - routers           │      │ - get_cache / set_cache│
-│ - middleware        │      │ (used in repository)   │
-└───────┬─────────────┘      └────────────────────────┘
-        │                                      │
-        │                                      │
-  ┌─────▼─────┐                           ┌────▼───────┐
-  │ repository│◄─────────────────────────►│  /database │
-  │ - queries │                           │  Database  │
-  └───────────┘                           │ (aiomysql) │
-                                          └────────────┘
-
 - The controller layers expose the HTTP routes.
 - The repository performs async DB queries and caches results with Redis.
 - Redis is configured in config/config.py (TTL = 100 s).
