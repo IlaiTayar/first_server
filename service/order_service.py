@@ -30,8 +30,10 @@ async def get_order_by_id(order_id: int) -> Optional[Order]:
 
 async def get_orders_by_customer_id(customer_id: int) -> Optional[List[Order]]:
     customer: Optional[Customer] = await customer_repository.get_customer_by_id(customer_id)
+
     if not customer:
         return None
+
     return await order_repository.get_orders_by_customer_id(customer_id)
 
 
