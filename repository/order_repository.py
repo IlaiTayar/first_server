@@ -6,6 +6,9 @@ from database import database
 from model.order import Order
 
 
+TABLE_NAME = "orders"
+
+
 def _to_order(record: Record) -> Order:
     return Order(
         order_id=record["order_id"],
@@ -13,9 +16,6 @@ def _to_order(record: Record) -> Order:
         item_name=record["item_name"],
         price=record["price"]
     )
-
-
-TABLE_NAME = "orders"
 
 
 async def create_order(order: Order) -> str:
